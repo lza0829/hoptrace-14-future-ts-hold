@@ -22,7 +22,10 @@ async function run() {
 <template>
   <div class="page-card">
     <h1>装载</h1>
-    <p class="lead">从本地夹具跑一批轨迹点装载。乱序重排 / 截止旁路 / 重复隔离由功能题空桩补齐。</p>
+    <p class="lead">
+      从本地夹具跑一批轨迹点装载。event_ts 晚于业务钟的点会分流到暂缓区，不进正式时间线；
+      分流或写入失败整批回滚。
+    </p>
     <button class="btn" :disabled="busy" @click="run">{{ busy ? '装载中…' : '跑装载批次' }}</button>
     <p v-if="err" class="muted" style="margin-top:12px">{{ err }}</p>
     <pre v-if="result" style="margin-top:16px;font-family:var(--mono);font-size:12px;white-space:pre-wrap">{{ result }}</pre>

@@ -35,6 +35,8 @@ watch(selected, (id) => {
 
 const hops = computed(() => detail.value?.hops || [])
 const proof = computed(() => detail.value?.proof)
+const held = computed(() => detail.value?.held || [])
+const promoted = computed(() => detail.value?.promoted || [])
 </script>
 
 <template>
@@ -43,8 +45,10 @@ const proof = computed(() => detail.value?.proof)
     <div class="stat-row" v-if="overview">
       <div class="stat"><b>{{ overview.waybills }}</b><span>运单</span></div>
       <div class="stat"><b>{{ overview.hops_primary }}</b><span>正式 hop</span></div>
+      <div class="stat"><b>{{ overview.held }}</b><span>暂缓中</span></div>
       <div class="stat"><b>{{ overview.hops_sidecar }}</b><span>旁路</span></div>
       <div class="stat"><b>{{ overview.quarantine }}</b><span>隔离</span></div>
+      <div class="stat"><b>{{ overview.clock_ts }}</b><span>业务钟 v{{ overview.clock_version }}</span></div>
     </div>
 
     <div class="tri">
@@ -76,6 +80,16 @@ const proof = computed(() => detail.value?.proof)
           </div>
         </div>
         <p v-else class="muted">无正式轨迹点</p>
+
+        <div class="hold-block" v-if="held.length">
+          <h3>暂缓 · 待业务钟（{{ held.length }}）</h3>
+          <div class="hold-node" v-for="h in held" :key="h.hold_key">
+            <div class="ts">{{ h.event_ts }}</div>
+            <div class="code">{{ h.event_code }}</div>
+            <div class="loc">{{ h.location_code }} · 应晋升 {{ h.due_ts }}</div>
+          </div>
+        </div>
+        <p class="muted" v-if="promoted.length">已晋升 {{ promoted.length }} 点</p>
       </section>
 
       <aside class="pane inspect-pane">
@@ -93,6 +107,12 @@ const proof = computed(() => detail.value?.proof)
           <dt>写入</dt><dd>{{ proof.created_at }}</dd>
         </dl>
         <p v-else class="muted">暂无证明</p>
+        <h2>暂缓</h2>
+        <dl class="kv">
+          <dt>暂缓中</dt><dd>{{ held.length }}</dd>
+          <dt>已晋升</dt><dd>{{ promoted.length }}</dd>
+        </dl>
+        <router-link class="hold-link" to="/holds">去暂缓页处理 →</router-link>
       </aside>
 
       <footer class="pane dot-rail">

@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 
 from app.db import FIXTURES_DIR, connect
+from app.modules.future_ts_hold.clock import DEFAULT_CLOCK_TS
+from app.modules.future_ts_hold.schema import HOLD_SCHEMA
 
 
 SCHEMA = """
@@ -62,6 +64,11 @@ EVENT_STATUS = {
 def init_db():
     conn = connect()
     conn.executescript(SCHEMA)
+    conn.executescript(HOLD_SCHEMA)
+    conn.execute(
+        "INSERT OR IGNORE INTO clock_config(id, clock_ts, version, updated_at) VALUES (1,?,?,?)",
+        (DEFAULT_CLOCK_TS, 1, "2026-11-17T00:00:00Z"),
+    )
     n = conn.execute("SELECT COUNT(*) AS c FROM waybills").fetchone()["c"]
     if n == 0:
         _seed_fixtures(conn)

@@ -25,6 +25,7 @@ onMounted(async () => {
       <nav class="chip-nav">
         <router-link to="/">测绘板</router-link>
         <router-link to="/ingest">装载</router-link>
+        <router-link to="/holds">暂缓</router-link>
         <router-link to="/sidecar">旁路</router-link>
         <router-link to="/quarantine">隔离</router-link>
         <router-link to="/proofs">证明</router-link>
